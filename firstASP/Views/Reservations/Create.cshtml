@@ -11,7 +11,9 @@
 
             <div class="text-center mb-4">
                 <p class="section-label">BENILDE STUDENTS</p>
+
                 <h1 class="fw-bold">Reserve Your Court</h1>
+
                 <p class="text-muted">
                     Enter your student information and preferred schedule.
                 </p>
@@ -19,30 +21,21 @@
 
             <div class="card shadow-sm border-0 p-4">
 
-                <h4 class="fw-bold mb-3">
+                <h4 class="fw-bold mb-4">
                     <i class="bi bi-basketball"></i>
                     School Basketball Court
                 </h4>
 
-                <form asp-action="Create" method="post">
+                <form asp-controller="Reservations"
+                      asp-action="Create"
+                      method="post">
 
-                    <div asp-validation-summary="ModelOnly"
-                         class="text-danger mb-3"></div>
+                    @Html.AntiForgeryToken()
 
-                    <div class="mb-3">
-                        <label asp-for="StudentIdNumber"
-                               class="form-label fw-bold">
-                            Student ID Number
-                        </label>
+                    <div asp-validation-summary="All"
+                         class="alert alert-danger mb-3"></div>
 
-                        <input asp-for="StudentIdNumber"
-                               class="form-control"
-                               placeholder="Enter your Benilde student ID" />
-
-                        <span asp-validation-for="StudentIdNumber"
-                              class="text-danger"></span>
-                    </div>
-
+                    <!-- Benilde Email -->
                     <div class="mb-3">
                         <label asp-for="BenildeEmail"
                                class="form-label fw-bold">
@@ -52,12 +45,30 @@
                         <input asp-for="BenildeEmail"
                                type="email"
                                class="form-control"
-                               placeholder="Enter your Benilde email" />
+                               placeholder="Enter your Benilde email"
+                               required />
 
                         <span asp-validation-for="BenildeEmail"
                               class="text-danger"></span>
                     </div>
 
+                    <!-- Student ID -->
+                    <div class="mb-3">
+                        <label asp-for="StudentIdNumber"
+                               class="form-label fw-bold">
+                            Student ID Number
+                        </label>
+
+                        <input asp-for="StudentIdNumber"
+                               class="form-control"
+                               placeholder="Enter your Benilde student ID"
+                               required />
+
+                        <span asp-validation-for="StudentIdNumber"
+                              class="text-danger"></span>
+                    </div>
+
+                    <!-- Full Name -->
                     <div class="mb-3">
                         <label asp-for="StudentName"
                                class="form-label fw-bold">
@@ -66,12 +77,14 @@
 
                         <input asp-for="StudentName"
                                class="form-control"
-                               placeholder="Enter your full name" />
+                               placeholder="Enter your full name"
+                               required />
 
                         <span asp-validation-for="StudentName"
                               class="text-danger"></span>
                     </div>
 
+                    <!-- Starting Date -->
                     <div class="mb-3">
                         <label asp-for="StartDateTime"
                                class="form-label fw-bold">
@@ -81,12 +94,14 @@
                         <input asp-for="StartDateTime"
                                type="datetime-local"
                                asp-format="{0:yyyy-MM-ddTHH:mm}"
-                               class="form-control" />
+                               class="form-control"
+                               required />
 
                         <span asp-validation-for="StartDateTime"
                               class="text-danger"></span>
                     </div>
 
+                    <!-- Ending Date -->
                     <div class="mb-4">
                         <label asp-for="EndDateTime"
                                class="form-label fw-bold">
@@ -96,18 +111,21 @@
                         <input asp-for="EndDateTime"
                                type="datetime-local"
                                asp-format="{0:yyyy-MM-ddTHH:mm}"
-                               class="form-control" />
+                               class="form-control"
+                               required />
 
                         <span asp-validation-for="EndDateTime"
                               class="text-danger"></span>
                     </div>
 
+                    <!-- Submit -->
                     <button type="submit"
-                            class="btn btn-dark w-100 py-3">
-                        Submit Reservation
+                            class="btn btn-dark w-100 py-3 fw-bold">
+                        SUBMIT RESERVATION
                         <i class="bi bi-arrow-right"></i>
                     </button>
 
+                    <!-- Back -->
                     <a asp-controller="Home"
                        asp-action="Index"
                        class="btn btn-outline-dark w-100 mt-2">
@@ -115,6 +133,7 @@
                     </a>
 
                 </form>
+
             </div>
         </div>
     </div>

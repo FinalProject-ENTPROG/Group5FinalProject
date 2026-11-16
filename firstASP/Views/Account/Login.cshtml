@@ -1,0 +1,95 @@
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<section class="hero-section min-vh-100 d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+
+            <div class="col-lg-6 text-center text-lg-start mb-5 mb-lg-0">
+                <span class="hero-tag">
+                    <i class="bi bi-basketball"></i>
+                    BASKETBALL RESERVATION SYSTEM
+                </span>
+
+                <h1 class="hero-title">
+                    Find Your Court.<br />
+                    <span>Play Your Game.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Welcome to BRS. Log in to reserve your school's
+                    basketball court and manage your reservations.
+                </p>
+            </div>
+
+            <div class="col-md-8 col-lg-5">
+                <div class="card border-0 shadow-lg p-4 p-md-5">
+
+                    <div class="text-center mb-4">
+                        <i class="bi bi-basketball display-3"></i>
+                        <h2 class="fw-bold mt-2">BRS</h2>
+                        <h4 class="fw-bold mt-3">WELCOME BACK</h4>
+                        <p class="text-muted">Log in to your account</p>
+                    </div>
+
+                    <form asp-controller="Account"
+                          asp-action="Login"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="All"
+                             class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                Email Address
+                            </label>
+
+                            <input type="email"
+                                   name="email"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter your email"
+                                   required />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                Password
+                            </label>
+
+                            <input type="password"
+                                   name="password"
+                                   class="form-control form-control-lg"
+                                   placeholder="Enter your password"
+                                   required />
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-dark btn-lg w-100 fw-bold">
+                            LOG IN
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <p class="text-muted mb-1">
+                            Don't have a student account?
+                        </p>
+
+                        <a asp-controller="Account"
+                           asp-action="Register"
+                           class="text-dark fw-bold">
+                            Create an account
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

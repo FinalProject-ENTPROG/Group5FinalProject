@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace firstASP.Controllers;
 
@@ -18,13 +19,20 @@ public class AccountController : Controller
     }
 
     // LOGIN PAGE
+    [AllowAnonymous]
     [HttpGet]
     public IActionResult Login()
     {
+        if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
         return View();
     }
 
     // LOGIN PROCESS
+    [AllowAnonymous]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(string email, string password)
@@ -48,22 +56,19 @@ public class AccountController : Controller
         {
             var user = await _userManager.FindByEmailAsync(email);
 
-            if (user != null)
+            if (user != null &&
+                (await _userManager.IsInRoleAsync(user, "Admin") ||
+                 await _userManager.IsInRoleAsync(user, "Student")))
             {
-                if (await _userManager.IsInRoleAsync(user, "Admin"))
-                {
-                    return RedirectToAction("Admin", "Reservations");
-                }
-
-                if (await _userManager.IsInRoleAsync(user, "Student"))
-                {
-                    return RedirectToAction("Index", "Reservations");
-                }
+                return RedirectToAction("Index", "Home");
             }
 
             await _signInManager.SignOutAsync();
 
-            ModelState.AddModelError("", "Your account does not have an assigned role.");
+            ModelState.AddModelError(
+                "",
+                "Your account does not have an assigned role.");
+
             return View();
         }
 
@@ -72,6 +77,7 @@ public class AccountController : Controller
     }
 
     // STUDENT REGISTRATION PAGE
+    [AllowAnonymous]
     [HttpGet]
     public IActionResult Register()
     {
@@ -79,6 +85,7 @@ public class AccountController : Controller
     }
 
     // STUDENT REGISTRATION PROCESS
+    [AllowAnonymous]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(
@@ -100,8 +107,10 @@ public class AccountController : Controller
             email,
             @"^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9-]+\.)*benilde\.edu\.ph$"))
         {
-            ModelState.AddModelError("",
+            ModelState.AddModelError(
+                "",
                 "Please use your official Benilde email address.");
+
             return View();
         }
 
@@ -152,6 +161,7 @@ public class AccountController : Controller
     }
 
     // LOGOUT
+    [Authorize]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
