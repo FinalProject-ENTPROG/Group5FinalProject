@@ -1,11 +1,18 @@
+
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using firstASP.Models;
 
 namespace firstASP.Data;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
+public class ApplicationDbContext : IdentityDbContext
 {
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
+    {
+    }
 
-public DbSet<firstASP.Models.Customer> Customer { get; set; } = default!;
+    public DbSet<Customer> Customer { get; set; } = default!;
+
+    public DbSet<Reservation> Reservations { get; set; } = default!;
 }
