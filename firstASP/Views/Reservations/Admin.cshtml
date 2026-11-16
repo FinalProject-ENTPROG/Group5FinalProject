@@ -1,0 +1,166 @@
+
+@model IEnumerable<firstASP.Models.Reservation>
+
+@{
+    ViewData["Title"] = "Admin Approval";
+}
+
+<div class="container py-5">
+
+    <div class="text-center mb-5">
+        <p class="section-label">BRS MANAGEMENT</p>
+        <h1 class="fw-bold">Admin Approval</h1>
+        <p class="text-muted">
+            Review and manage school basketball court reservations.
+        </p>
+    </div>
+
+    @if (TempData["AdminMessage"] != null)
+    {
+        <div class="alert alert-dark">
+            @TempData["AdminMessage"]
+        </div>
+    }
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm border-0">
+                <p class="text-muted mb-1">Total Reservations</p>
+                <h3 class="fw-bold">@Model.Count()</h3>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm border-0">
+                <p class="text-muted mb-1">Pending</p>
+                <h3 class="fw-bold">
+                    @Model.Count(r => r.Status == "Pending")
+                </h3>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm border-0">
+                <p class="text-muted mb-1">Approved</p>
+                <h3 class="fw-bold">
+                    @Model.Count(r => r.Status == "Approved")
+                </h3>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-dark">
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Student Name</th>
+                        <th>Benilde Email</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                No reservations found.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var reservation in Model)
+                        {
+                            <tr>
+                                <td>@reservation.StudentIdNumber</td>
+
+                                <td>@reservation.StudentName</td>
+
+                                <td>@reservation.BenildeEmail</td>
+
+                                <td>
+                                    @reservation.StartDateTime.ToString("MMM dd, yyyy")
+                                </td>
+
+                                <td>
+                                    @reservation.StartDateTime.ToString("hh:mm tt")
+                                    -
+                                    @reservation.EndDateTime.ToString("hh:mm tt")
+                                </td>
+
+                                <td>
+                                    @if (reservation.Status == "Approved")
+                                    {
+                                        <span class="badge bg-success">Approved</span>
+                                    }
+                                    else if (reservation.Status == "Rejected")
+                                    {
+                                        <span class="badge bg-danger">Rejected</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Pending</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (reservation.Status == "Pending")
+                                    {
+                                        <div class="d-flex gap-2">
+
+                                            <form asp-action="Approve"
+                                                  method="post">
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@reservation.Id" />
+
+                                                <button type="submit"
+                                                        class="btn btn-dark btn-sm">
+                                                    Approve
+                                                </button>
+                                            </form>
+
+                                            <form asp-action="Reject"
+                                                  method="post">
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@reservation.Id" />
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-dark btn-sm">
+                                                    Reject
+                                                </button>
+                                            </form>
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">
+                                            No action available
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,64 @@
+
+@model firstASP.Models.Reservation
+
+@{
+    ViewData["Title"] = "Reservation Submitted";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-sm p-5 text-center">
+
+                <i class="bi bi-check-circle display-1"></i>
+
+                <h1 class="fw-bold mt-3">
+                    Reservation Submitted!
+                </h1>
+
+                <p class="text-muted">
+                    Your reservation request has been received.
+                </p>
+
+                <hr />
+
+                <div class="text-start">
+                    <p><strong>Student ID:</strong> @Model.StudentIdNumber</p>
+                    <p><strong>Student Name:</strong> @Model.StudentName</p>
+                    <p><strong>Benilde Email:</strong> @Model.BenildeEmail</p>
+                    <p><strong>Court:</strong> School Basketball Court</p>
+
+                    <p>
+                        <strong>Start:</strong>
+                        @Model.StartDateTime.ToString("MMMM dd, yyyy hh:mm tt")
+                    </p>
+
+                    <p>
+                        <strong>End:</strong>
+                        @Model.EndDateTime.ToString("MMMM dd, yyyy hh:mm tt")
+                    </p>
+
+                    <p><strong>Status:</strong> @Model.Status</p>
+                </div>
+
+                <p class="text-muted small">
+                    Your reservation is pending approval.
+                </p>
+
+                <a asp-controller="Reservations"
+                   asp-action="Index"
+                   class="btn btn-dark w-100">
+                    View Reservations
+                </a>
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="btn btn-outline-dark w-100 mt-2">
+                    Back to Home
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>

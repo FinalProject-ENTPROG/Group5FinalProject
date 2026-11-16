@@ -1,0 +1,76 @@
+
+@model IEnumerable<firstASP.Models.Reservation>
+
+@{
+    ViewData["Title"] = "Reservations";
+}
+
+<div class="container py-5">
+
+    <div class="text-center mb-5">
+        <p class="section-label">BRS SCHEDULE</p>
+        <h1 class="fw-bold">Reservation Schedule</h1>
+        <p class="text-muted">
+            View submitted basketball court reservations.
+        </p>
+    </div>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a asp-action="Create" class="btn btn-dark">
+            <i class="bi bi-plus-lg"></i> Make a Reservation
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-dark">
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Student Name</th>
+                        <th>Benilde Email</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                No reservations yet.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var reservation in Model)
+                        {
+                            <tr>
+                                <td>@reservation.StudentIdNumber</td>
+                                <td>@reservation.StudentName</td>
+                                <td>@reservation.BenildeEmail</td>
+                                <td>
+                                    @reservation.StartDateTime.ToString("MMM dd, yyyy hh:mm tt")
+                                </td>
+                                <td>
+                                    @reservation.EndDateTime.ToString("MMM dd, yyyy hh:mm tt")
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        @reservation.Status
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>

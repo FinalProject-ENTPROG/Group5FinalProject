@@ -1,0 +1,72 @@
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-sm border-0 p-4">
+
+                <div class="text-center mb-4">
+                    <h1 class="fw-bold">
+                        <i class="bi bi-basketball"></i> BRS
+                    </h1>
+                    <h4 class="fw-bold mt-3">WELCOME BACK</h4>
+                    <p class="text-muted">
+                        Basketball Reservation System
+                    </p>
+                </div>
+
+                <form asp-controller="Account"
+                      asp-action="Login"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="All"
+                         class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            Email Address
+                        </label>
+                        <input type="email"
+                               name="email"
+                               class="form-control"
+                               placeholder="Enter your email"
+                               required />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            Password
+                        </label>
+                        <input type="password"
+                               name="password"
+                               class="form-control"
+                               placeholder="Enter your password"
+                               required />
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-dark w-100 py-2 fw-bold">
+                        LOG IN
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="mb-0">
+                        Don't have a student account?
+                    </p>
+                    <a asp-controller="Account"
+                       asp-action="Register"
+                       class="text-dark fw-bold">
+                        Register here
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
