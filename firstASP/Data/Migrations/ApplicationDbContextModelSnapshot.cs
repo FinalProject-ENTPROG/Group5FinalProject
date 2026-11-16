@@ -250,11 +250,17 @@ namespace firstASP.Data.Migrations
                     b.Property<DateTime>("EndDateTime")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsNotificationRead")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("StartDateTime")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Status")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("StatusUpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("StudentIdNumber")
@@ -270,6 +276,34 @@ namespace firstASP.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Reservations");
+                });
+
+            modelBuilder.Entity("firstASP.Models.StudentProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StudentIdNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("StudentProfiles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

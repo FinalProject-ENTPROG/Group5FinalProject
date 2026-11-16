@@ -32,4 +32,9 @@ public class Reservation
     public string Status { get; set; } = "Pending";
 
     public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+    // Notification information
+    public bool IsNotificationRead { get; set; } = true;
+
+    public DateTime? StatusUpdatedAt { get; set; }
 }

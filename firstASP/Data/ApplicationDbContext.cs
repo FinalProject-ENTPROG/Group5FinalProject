@@ -7,7 +7,8 @@ namespace firstASP.Data;
 
 public class ApplicationDbContext : IdentityDbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    public ApplicationDbContext(
+        DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
     }
@@ -15,4 +16,6 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Customer> Customer { get; set; } = default!;
 
     public DbSet<Reservation> Reservations { get; set; } = default!;
+
+    public DbSet<StudentProfile> StudentProfiles { get; set; } = default!;
 }
