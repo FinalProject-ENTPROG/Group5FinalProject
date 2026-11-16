@@ -1,0 +1,177 @@
+
+@model IEnumerable<firstASP.Models.Reservation>
+
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<div class="container py-5">
+
+    <div class="text-center mb-5">
+        <p class="section-label">BRS UPDATES</p>
+
+        <h1 class="fw-bold">
+            <i class="bi bi-bell"></i>
+            Notifications
+        </h1>
+
+        <p class="text-muted">
+            Stay updated with your basketball court reservations.
+        </p>
+    </div>
+
+    <div class="card border-0 shadow-sm p-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0">
+                Reservation Updates
+            </h4>
+
+            <span class="badge bg-dark">
+                @Model.Count() Updates
+            </span>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+
+                <i class="bi bi-bell-slash display-3"></i>
+
+                <h5 class="fw-bold mt-3">
+                    No Notifications Yet
+                </h5>
+
+                <p class="text-muted">
+                    You'll see an update here when the administrator
+                    approves or rejects your reservation.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            @foreach (var reservation in Model)
+            {
+                <div class="border rounded p-3 mb-3">
+
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+
+                        <div class="d-flex gap-3">
+
+                            <div>
+                                @if (reservation.Status == "Approved")
+                                {
+                                    <i class="bi bi-check-circle-fill text-success fs-2"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-x-circle-fill text-danger fs-2"></i>
+                                }
+                            </div>
+
+                            <div>
+                                @if (reservation.Status == "Approved")
+                                {
+                                    <h5 class="fw-bold text-success">
+                                        Reservation Approved!
+                                    </h5>
+
+                                    <p class="mb-2">
+                                        Your basketball court reservation has been approved.
+                                    </p>
+                                }
+                                else
+                                {
+                                    <h5 class="fw-bold text-danger">
+                                        Reservation Rejected
+                                    </h5>
+
+                                    <p class="mb-2">
+                                        Your basketball court reservation has been rejected.
+                                    </p>
+                                }
+
+                                <p class="text-muted mb-1">
+                                    <i class="bi bi-calendar"></i>
+
+                                    @reservation.StartDateTime.ToString("MMMM dd, yyyy")
+                                </p>
+
+                                <p class="text-muted mb-1">
+                                    <i class="bi bi-clock"></i>
+
+                                    @reservation.StartDateTime.ToString("hh:mm tt")
+                                    -
+                                    @reservation.EndDateTime.ToString("hh:mm tt")
+                                </p>
+
+                                <small class="text-muted">
+                                    Updated:
+                                    @reservation.StatusUpdatedAt?.ToString("MMMM dd, yyyy hh:mm tt")
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <div>
+                            @if (!reservation.IsNotificationRead)
+                            {
+                                <span class="badge bg-dark">
+                                    NEW
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">
+                                    READ
+                                </span>
+                            }
+                        </div>
+
+                    </div>
+
+                    @if (!reservation.IsNotificationRead)
+                    {
+                        <form asp-action="MarkAsRead"
+                              method="post"
+                              class="mt-3">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="id"
+                                   value="@reservation.Id" />
+
+                            <button type="submit"
+                                    class="btn btn-outline-dark btn-sm">
+                                <i class="bi bi-check2"></i>
+                                Mark as Read
+                            </button>
+
+                        </form>
+                    }
+
+                </div>
+            }
+        }
+
+    </div>
+
+    <div class="text-center mt-4">
+
+        <a asp-action="Index"
+           class="btn btn-outline-dark px-4">
+            <i class="bi bi-calendar-check"></i>
+            My Reservations
+        </a>
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="btn btn-dark px-4">
+            Back to Home
+        </a>
+
+    </div>
+
+</div>

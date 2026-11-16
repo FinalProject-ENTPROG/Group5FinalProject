@@ -1,0 +1,122 @@
+
+@model firstASP.Models.StudentProfile
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "Student Profile";
+    var currentUser = await UserManager.GetUserAsync(User);
+}
+
+<div class="container py-5">
+
+    <div class="text-center mb-5">
+        <p class="section-label">BRS STUDENT ACCOUNT</p>
+        <h1 class="fw-bold">My Profile</h1>
+        <p class="text-muted">
+            View and manage your student information.
+        </p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <div class="card border-0 shadow-sm p-4 p-md-5">
+
+                <div class="text-center mb-4">
+                    <div class="rounded-circle bg-dark text-white d-inline-flex align-items-center justify-content-center"
+                         style="width: 90px; height: 90px; font-size: 40px;">
+                        <i class="bi bi-person"></i>
+                    </div>
+
+                    <h4 class="fw-bold mt-3 mb-1">
+                        @(string.IsNullOrWhiteSpace(Model.FullName)
+                            ? "Student Name"
+                            : Model.FullName)
+                    </h4>
+
+                    <p class="text-muted">
+                        Student Account
+                    </p>
+                </div>
+
+                @if (TempData["ProfileMessage"] != null)
+                {
+                    <div class="alert alert-success">
+                        @TempData["ProfileMessage"]
+                    </div>
+                }
+
+                <form asp-action="Index" method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            Benilde Email
+                        </label>
+
+                        <input class="form-control"
+                               value="@currentUser?.Email"
+                               readonly />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="StudentIdNumber"
+                               class="form-label fw-bold">
+                            Student ID Number
+                        </label>
+
+                        <input asp-for="StudentIdNumber"
+                               class="form-control"
+                               placeholder="Enter your student ID" />
+
+                        <span asp-validation-for="StudentIdNumber"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="FullName"
+                               class="form-label fw-bold">
+                            Full Name
+                        </label>
+
+                        <input asp-for="FullName"
+                               class="form-control"
+                               placeholder="Enter your full name" />
+
+                        <span asp-validation-for="FullName"
+                              class="text-danger"></span>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-dark w-100 rounded-pill py-2">
+                        <i class="bi bi-save"></i>
+                        Save Profile
+                    </button>
+
+                </form>
+
+                <hr class="my-4" />
+
+                <div class="text-center">
+                    <a asp-controller="Home"
+                       asp-action="Index"
+                       class="btn btn-outline-dark rounded-pill px-4">
+                        Back to Home
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,170 @@
+
+@model IEnumerable<firstASP.Models.Reservation>
+
+@{
+    ViewData["Title"] = "Court Schedule";
+
+    var weekStart = (DateTime)ViewBag.WeekStart;
+    var previousWeek = (DateTime)ViewBag.PreviousWeek;
+    var nextWeek = (DateTime)ViewBag.NextWeek;
+
+    var reservations = Model.ToList();
+}
+
+<div class="container py-5">
+
+    <div class="text-center mb-5">
+        <p class="section-label">BRS COURT AVAILABILITY</p>
+
+        <h1 class="fw-bold">Court Schedule</h1>
+
+        <p class="text-muted">
+            Check the basketball court's occupied schedules.
+        </p>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+
+        <a asp-action="Schedule"
+           asp-route-date="@previousWeek.ToString("yyyy-MM-dd")"
+           class="btn btn-outline-dark">
+            <i class="bi bi-chevron-left"></i> Previous Week
+        </a>
+
+        <h5 class="fw-bold mb-0">
+            @weekStart.ToString("MMMM dd")
+            -
+            @weekStart.AddDays(6).ToString("MMMM dd, yyyy")
+        </h5>
+
+        <a asp-action="Schedule"
+           asp-route-date="@nextWeek.ToString("yyyy-MM-dd")"
+           class="btn btn-outline-dark">
+            Next Week <i class="bi bi-chevron-right"></i>
+        </a>
+
+    </div>
+
+    <div class="card border-0 shadow-sm p-4">
+
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <i class="bi bi-basketball fs-1"></i>
+
+            <div>
+                <h4 class="fw-bold mb-0">
+                    School Basketball Court
+                </h4>
+
+                <small class="text-muted">
+                    Weekly Reservation Overview
+                </small>
+            </div>
+        </div>
+
+        <div class="d-flex gap-3 mb-4 flex-wrap">
+
+            <span>
+                <span class="badge bg-success">&nbsp;</span>
+                Approved
+            </span>
+
+            <span>
+                <span class="badge bg-warning">&nbsp;</span>
+                Pending
+            </span>
+
+        </div>
+
+        @if (!reservations.Any())
+        {
+            <div class="text-center py-5">
+
+                <i class="bi bi-calendar-check display-3"></i>
+
+                <h5 class="fw-bold mt-3">
+                    No Reservations This Week
+                </h5>
+
+                <p class="text-muted">
+                    The court has no pending or approved reservations
+                    for this week.
+                </p>
+
+            </div>
+        }
+        else
+        {
+            @foreach (var day in reservations.GroupBy(r => r.StartDateTime.Date))
+            {
+                <div class="mb-4">
+
+                    <h5 class="fw-bold border-bottom pb-2">
+                        @day.Key.ToString("dddd, MMMM dd, yyyy")
+                    </h5>
+
+                    @foreach (var reservation in day)
+                    {
+                        <div class="border rounded p-3 mb-2">
+
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                                <div>
+                                    <h6 class="fw-bold mb-1">
+
+                                        <i class="bi bi-clock"></i>
+
+                                        @reservation.StartDateTime.ToString("hh:mm tt")
+                                        -
+                                        @reservation.EndDateTime.ToString("hh:mm tt")
+
+                                    </h6>
+
+                                    <small class="text-muted">
+                                        School Basketball Court
+                                    </small>
+                                </div>
+
+                                @if (reservation.Status == "Approved")
+                                {
+                                    <span class="badge bg-success">
+                                        Approved - Occupied
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">
+                                        Pending - Unavailable
+                                    </span>
+                                }
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            }
+        }
+
+    </div>
+
+    <div class="text-center mt-4">
+
+        @if (User.IsInRole("Student"))
+        {
+            <a asp-action="Create"
+               class="btn btn-dark px-4">
+                <i class="bi bi-plus-lg"></i>
+                Reserve a Court
+            </a>
+        }
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="btn btn-outline-dark px-4">
+            Back to Home
+        </a>
+
+    </div>
+
+</div>
