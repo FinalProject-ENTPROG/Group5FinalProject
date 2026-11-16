@@ -40,7 +40,6 @@ public class ReservationsController : Controller
     {
         string email = User.Identity!.Name!;
 
-        // Check if the entered email matches the logged-in account
         if (string.IsNullOrWhiteSpace(reservation.BenildeEmail) ||
             !string.Equals(
                 reservation.BenildeEmail.Trim(),
@@ -52,10 +51,8 @@ public class ReservationsController : Controller
                 "Please enter the same Benilde email used to log in.");
         }
 
-        // Always save the authenticated account's email
         reservation.BenildeEmail = email;
 
-        // Check starting date
         if (reservation.StartDateTime <= DateTime.Now)
         {
             ModelState.AddModelError(
@@ -63,7 +60,6 @@ public class ReservationsController : Controller
                 "Please select a future date and time.");
         }
 
-        // Check ending date
         if (reservation.EndDateTime <= reservation.StartDateTime)
         {
             ModelState.AddModelError(
@@ -76,7 +72,6 @@ public class ReservationsController : Controller
             return View(reservation);
         }
 
-        // Check overlapping pending or approved reservations
         bool hasConflict = await _context.Reservations.AnyAsync(r =>
             r.Status != "Rejected" &&
             r.StartDateTime < reservation.EndDateTime &&
@@ -91,9 +86,10 @@ public class ReservationsController : Controller
             return View(reservation);
         }
 
-        // Save reservation
         reservation.Status = "Pending";
         reservation.CreatedAt = DateTime.Now;
+        reservation.IsNotificationRead = true;
+        reservation.StatusUpdatedAt = null;
 
         _context.Reservations.Add(reservation);
 
@@ -129,6 +125,88 @@ public class ReservationsController : Controller
         return View(reservations);
     }
 
+    // STUDENT AND ADMIN: View court schedule
+    [Authorize(Roles = "Student,Admin")]
+    public async Task<IActionResult> Schedule(DateTime? date)
+    {
+        var selectedDate = (date ?? DateTime.Today).Date;
+
+        int daysFromMonday =
+            ((int)selectedDate.DayOfWeek + 6) % 7;
+
+        var weekStart = selectedDate.AddDays(-daysFromMonday);
+        var weekEnd = weekStart.AddDays(7);
+
+        var reservations = await _context.Reservations
+            .Where(r =>
+                r.Status != "Rejected" &&
+                r.StartDateTime < weekEnd &&
+                r.EndDateTime > weekStart)
+            .OrderBy(r => r.StartDateTime)
+            .ToListAsync();
+
+        ViewBag.WeekStart = weekStart;
+        ViewBag.PreviousWeek = weekStart.AddDays(-7);
+        ViewBag.NextWeek = weekStart.AddDays(7);
+
+        return View(reservations);
+    }
+
+    // STUDENT: View notifications
+    [Authorize(Roles = "Student")]
+    public async Task<IActionResult> Notifications()
+    {
+        string email = User.Identity!.Name!;
+
+        var notifications = await _context.Reservations
+            .Where(r =>
+                r.BenildeEmail == email &&
+                r.StatusUpdatedAt != null)
+            .OrderByDescending(r => r.StatusUpdatedAt)
+            .ToListAsync();
+
+        return View(notifications);
+    }
+
+    // STUDENT: Mark notification as read
+    [Authorize(Roles = "Student")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> MarkAsRead(int id)
+    {
+        string email = User.Identity!.Name!;
+
+        var reservation = await _context.Reservations
+            .FirstOrDefaultAsync(r =>
+                r.Id == id &&
+                r.BenildeEmail == email);
+
+        if (reservation == null)
+        {
+            return NotFound();
+        }
+
+        reservation.IsNotificationRead = true;
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Notifications));
+    }
+
+    // STUDENT: Count unread notifications
+    [Authorize(Roles = "Student")]
+    public async Task<IActionResult> UnreadNotificationCount()
+    {
+        string email = User.Identity!.Name!;
+
+        int count = await _context.Reservations.CountAsync(r =>
+            r.BenildeEmail == email &&
+            r.StatusUpdatedAt != null &&
+            !r.IsNotificationRead);
+
+        return Json(new { count });
+    }
+
     // ADMIN: Approve reservation
     [Authorize(Roles = "Admin")]
     [HttpPost]
@@ -147,7 +225,6 @@ public class ReservationsController : Controller
             return RedirectToAction(nameof(Admin));
         }
 
-        // Check if another approved reservation uses the same time
         bool hasConflict = await _context.Reservations.AnyAsync(r =>
             r.Id != id &&
             r.Status == "Approved" &&
@@ -162,11 +239,13 @@ public class ReservationsController : Controller
         else
         {
             reservation.Status = "Approved";
+            reservation.IsNotificationRead = false;
+            reservation.StatusUpdatedAt = DateTime.Now;
 
             await _context.SaveChangesAsync();
 
             TempData["AdminMessage"] =
-                "Reservation successfully approved.";
+                "Reservation successfully approved. Student notification created.";
         }
 
         return RedirectToAction(nameof(Admin));
@@ -188,11 +267,13 @@ public class ReservationsController : Controller
         if (reservation.Status == "Pending")
         {
             reservation.Status = "Rejected";
+            reservation.IsNotificationRead = false;
+            reservation.StatusUpdatedAt = DateTime.Now;
 
             await _context.SaveChangesAsync();
 
             TempData["AdminMessage"] =
-                "Reservation successfully rejected.";
+                "Reservation successfully rejected. Student notification created.";
         }
 
         return RedirectToAction(nameof(Admin));
@@ -210,6 +291,7 @@ public class ReservationsController : Controller
         }
 
         bool isAdmin = User.IsInRole("Admin");
+
         bool isOwner = string.Equals(
             reservation.BenildeEmail,
             User.Identity!.Name,
