@@ -43,6 +43,30 @@
 
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Admin"
+                                   asp-action="Index">
+                                    <i class="bi bi-speedometer2"></i>
+                                    Admin Dashboard
+                                </a>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Student"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="StudentProfile"
+                                   asp-action="Index">
+                                    <i class="bi bi-person-circle"></i>
+                                    Student Dashboard
+                                </a>
+                            </li>
+                        }
+
                         <li class="nav-item">
                             <a class="nav-link"
                                asp-controller="Home"
@@ -52,20 +76,13 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link"
-                               asp-controller="Admin"
-                               asp-action="Index">
-                                <i class="bi bi-speedometer2"></i>
-                                Admin Dashboard
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
                             <form asp-controller="Account"
                                   asp-action="Logout"
                                   method="post"
                                   class="d-inline">
+
                                 @Html.AntiForgeryToken()
+
                                 <button type="submit"
                                         class="nav-link btn btn-link border-0">
                                     Log Out

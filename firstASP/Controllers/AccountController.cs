@@ -25,7 +25,15 @@ public class AccountController : Controller
     {
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
-            return RedirectToAction("Index", "Home");
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+
+            if (User.IsInRole("Student"))
+            {
+                return RedirectToAction("Index", "StudentProfile");
+            }
         }
 
         return View();
@@ -35,12 +43,17 @@ public class AccountController : Controller
     [AllowAnonymous]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Login(string email, string password)
+    public async Task<IActionResult> Login(
+        string email,
+        string password)
     {
         if (string.IsNullOrWhiteSpace(email) ||
             string.IsNullOrWhiteSpace(password))
         {
-            ModelState.AddModelError("", "Please enter your email and password.");
+            ModelState.AddModelError(
+                "",
+                "Please enter your email and password.");
+
             return View();
         }
 
@@ -56,13 +69,22 @@ public class AccountController : Controller
         {
             var user = await _userManager.FindByEmailAsync(email);
 
-            if (user != null &&
-                (await _userManager.IsInRoleAsync(user, "Admin") ||
-                 await _userManager.IsInRoleAsync(user, "Student")))
+            if (user != null)
             {
-                return RedirectToAction("Index", "Home");
+                // ADMIN ACCOUNT
+                if (await _userManager.IsInRoleAsync(user, "Admin"))
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
+
+                // STUDENT ACCOUNT
+                if (await _userManager.IsInRoleAsync(user, "Student"))
+                {
+                    return RedirectToAction("Index", "StudentProfile");
+                }
             }
 
+            // ACCOUNT HAS NO VALID ROLE
             await _signInManager.SignOutAsync();
 
             ModelState.AddModelError(
@@ -72,7 +94,10 @@ public class AccountController : Controller
             return View();
         }
 
-        ModelState.AddModelError("", "Invalid email or password.");
+        ModelState.AddModelError(
+            "",
+            "Invalid email or password.");
+
         return View();
     }
 
@@ -97,7 +122,10 @@ public class AccountController : Controller
             string.IsNullOrWhiteSpace(password) ||
             string.IsNullOrWhiteSpace(confirmPassword))
         {
-            ModelState.AddModelError("", "Please complete all fields.");
+            ModelState.AddModelError(
+                "",
+                "Please complete all fields.");
+
             return View();
         }
 
@@ -116,15 +144,22 @@ public class AccountController : Controller
 
         if (password != confirmPassword)
         {
-            ModelState.AddModelError("", "Passwords do not match.");
+            ModelState.AddModelError(
+                "",
+                "Passwords do not match.");
+
             return View();
         }
 
-        var existingUser = await _userManager.FindByEmailAsync(email);
+        var existingUser =
+            await _userManager.FindByEmailAsync(email);
 
         if (existingUser != null)
         {
-            ModelState.AddModelError("", "This email is already registered.");
+            ModelState.AddModelError(
+                "",
+                "This email is already registered.");
+
             return View();
         }
 
@@ -135,11 +170,15 @@ public class AccountController : Controller
             EmailConfirmed = true
         };
 
-        var result = await _userManager.CreateAsync(user, password);
+        var result = await _userManager.CreateAsync(
+            user,
+            password);
 
         if (result.Succeeded)
         {
-            var roleResult = await _userManager.AddToRoleAsync(user, "Student");
+            // NEW REGISTRATIONS ARE ALWAYS STUDENTS
+            var roleResult =
+                await _userManager.AddToRoleAsync(user, "Student");
 
             if (roleResult.Succeeded)
             {
@@ -148,13 +187,18 @@ public class AccountController : Controller
 
             await _userManager.DeleteAsync(user);
 
-            ModelState.AddModelError("", "Unable to assign the Student role.");
+            ModelState.AddModelError(
+                "",
+                "Unable to assign the Student role.");
+
             return View();
         }
 
         foreach (var error in result.Errors)
         {
-            ModelState.AddModelError("", error.Description);
+            ModelState.AddModelError(
+                "",
+                error.Description);
         }
 
         return View();
