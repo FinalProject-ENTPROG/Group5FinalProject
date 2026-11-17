@@ -1,0 +1,75 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container-fluid mt-4">
+
+    <h2 class="fw-bold mb-2">Admin Dashboard</h2>
+    <p class="text-muted">Basketball Reservation System Overview</p>
+
+    <hr />
+
+    <div class="row g-4 mt-2">
+
+        <!-- Total Reservations -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h6 class="text-muted">Total Reservations</h6>
+                    <h2 class="fw-bold text-primary">
+                        @ViewBag.TotalReservations
+                    </h2>
+                    <p class="mb-0 text-muted">
+                        All reservation requests
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Requests -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h6 class="text-muted">Pending Requests</h6>
+                    <h2 class="fw-bold text-warning">
+                        @ViewBag.PendingRequests
+                    </h2>
+                    <p class="mb-0 text-muted">
+                        Waiting for approval
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Approved Bookings -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h6 class="text-muted">Approved Bookings</h6>
+                    <h2 class="fw-bold text-success">
+                        @ViewBag.ApprovedBookings
+                    </h2>
+                    <p class="mb-0 text-muted">
+                        Successfully approved
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rejected Bookings -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h6 class="text-muted">Rejected Bookings</h6>
+                    <h2 class="fw-bold text-danger">
+                        @ViewBag.RejectedBookings
+                    </h2>
+                    <p class="mb-0 text-muted">
+                        Rejected reservations
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
