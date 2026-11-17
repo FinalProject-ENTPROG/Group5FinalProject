@@ -9,7 +9,6 @@ namespace firstASP.Controllers;
 [Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
-<<<<<<< HEAD
     private readonly ApplicationDbContext _context;
 
     public AdminController(ApplicationDbContext context)
@@ -36,36 +35,4 @@ public class AdminController : Controller
 
         return View();
     }
-=======
-    [Authorize(Roles = "Admin")]
-    public class AdminController : Controller
-    {
-        private readonly ApplicationDbContext _context;
-
-        public AdminController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<IActionResult> Index()
-        {
-            ViewBag.TotalReservations =
-                await _context.Reservations.CountAsync();
-
-            ViewBag.PendingRequests =
-                await _context.Reservations.CountAsync(
-                    r => r.Status == "Pending");
-
-            ViewBag.ApprovedBookings =
-                await _context.Reservations.CountAsync(
-                    r => r.Status == "Approved");
-
-            ViewBag.RejectedBookings =
-                await _context.Reservations.CountAsync(
-                    r => r.Status == "Rejected");
-
-            return View();
-        }
-    }
->>>>>>> origin/main
 }
