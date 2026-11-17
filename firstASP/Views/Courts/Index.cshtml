@@ -110,9 +110,15 @@
                                     <td>
                                         @if (reservation != null)
                                         {
-                                            <span class="badge bg-danger w-100 p-2">
-                                                Reserved
-                                            </span>
+                                            <div class="bg-danger text-white rounded p-2">
+                                                <strong>Reserved</strong>
+                                                <br />
+                                                <small>
+                                                    @reservation.StartDateTime.ToString("hh:mm tt")
+                                                    -
+                                                    @reservation.EndDateTime.ToString("hh:mm tt")
+                                                </small>
+                                            </div>
                                         }
                                         else
                                         {
